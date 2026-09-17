@@ -71,6 +71,12 @@ class StickyNote(QWidget):
         btn_template.setToolTip("Inserisci Template")
         btn_template.clicked.connect(self.show_template_menu)
 
+        btn_save = QPushButton("💾")
+        btn_save.setFixedSize(20, 20)
+        btn_save.setStyleSheet("border: none; background: transparent;")
+        btn_save.setToolTip("Salva Nota")
+        btn_save.clicked.connect(self.save_note)
+
         btn_add = QPushButton("+")
         btn_add.setFixedSize(20, 20)
         btn_add.setStyleSheet("border: none; background: transparent; font-weight: bold; font-size: 14px; color: #000000;")
@@ -94,6 +100,7 @@ class StickyNote(QWidget):
         header_layout.addWidget(btn_color)
         header_layout.addWidget(btn_font)
         header_layout.addWidget(btn_template)
+        header_layout.addWidget(btn_save)
         header_layout.addWidget(btn_add)
         header_layout.addStretch()
         header_layout.addWidget(btn_close)
@@ -102,6 +109,7 @@ class StickyNote(QWidget):
         self.text_edit.setFrameStyle(QFrame.NoFrame)
         self.text_edit.setPlainText(self.note_data.get("text", ""))
         self.apply_font()
+        self.text_edit.textChanged.connect(self.auto_save_text)
 
         self.resize_grip = QLabel("↔", self)
         self.resize_grip.setCursor(Qt.SizeFDiagCursor)
@@ -159,6 +167,7 @@ class StickyNote(QWidget):
         if hasattr(self, '_resize_start_pos'):
             del self._resize_start_pos
             del self._resize_start_size
+            self.auto_save_position()
 
     def change_color(self):
         colors = ["#FFF59D", "#F48FB1", "#81D4FA", "#A5D6A7", "#E0E0E0"]
@@ -245,6 +254,26 @@ class StickyNote(QWidget):
         else:
             self.text_edit.setPlainText(text)
 
+    def save_note(self):
+        app_instance = QApplication.instance()
+        if app_instance and hasattr(app_instance, "manager"):
+            app_instance.manager.save_notes()
+
+    def auto_save_text(self):
+        self.note_data["text"] = self.text_edit.toPlainText()
+        app_instance = QApplication.instance()
+        if app_instance and hasattr(app_instance, "manager"):
+            app_instance.manager.save_notes()
+
+    def auto_save_position(self):
+        self.note_data["x"] = self.x()
+        self.note_data["y"] = self.y()
+        self.note_data["w"] = self.width()
+        self.note_data["h"] = self.height()
+        app_instance = QApplication.instance()
+        if app_instance and hasattr(app_instance, "manager"):
+            app_instance.manager.save_notes()
+
     def create_new_note(self):
         new_data = {
             "text": "",
@@ -270,6 +299,7 @@ class StickyNote(QWidget):
             self.move(self.x() + delta.x(), self.y() + delta.y())
             self._update_resize_grip_position()
             self.old_pos = event.globalPosition().toPoint()
+            self.auto_save_position()
 
     def mouseReleaseEvent(self, event):
         self.old_pos = None
