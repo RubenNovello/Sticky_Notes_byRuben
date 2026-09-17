@@ -2,3 +2,4 @@ __pycache__/
 *.pyc
 .mac_sticky_notes.json
 .venv/
+build/
