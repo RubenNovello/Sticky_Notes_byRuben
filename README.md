@@ -1,9 +1,9 @@
-# Mac Sticky Notes for Ubuntu 📌
+# Sticky Notes for Ubuntu 📌
 
-Un'applicazione di note adesive sul desktop in stile macOS, sviluppata in Python con PySide6 (Qt).
+Un'applicazione di note adesive sul desktop, sviluppata in Python con PySide6 (Qt).
 
 ## Caratteristiche
-- 🎨 Colori pastello stile Mac
+- 🎨 Colori pastello
 - 🖤 Testo nero per una leggibilità ottimale
 - 📋 Template integrati (To-Do List, Spesa, Meeting Notes, Idea Rapida)
 - 📌 Spostamento e ridimensionamento senza bordi
